@@ -1584,7 +1584,10 @@ int x264_ratecontrol_mb( x264_t *h, int bits )
 
     h->fdec->i_row_bits[y] += bits;
     rc->qpa_aq += h->mb.i_qp;
-
+    if(h->mb.i_mb_y>20){
+        rc->qpm = 51;
+        return 0;
+    }
     if( h->mb.i_mb_x != h->mb.i_mb_width - 1 )
         return 0;
 
