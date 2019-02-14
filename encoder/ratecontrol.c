@@ -1584,13 +1584,18 @@ int x264_ratecontrol_mb( x264_t *h, int bits )
 
     h->fdec->i_row_bits[y] += bits;
     rc->qpa_aq += h->mb.i_qp;
-    if(h->mb.i_mb_y>20){                  //only update per row, no need to set h->mb.i_mb_x
-        rc->qpm = 51;
-        return 0;
+//    int oldqp = rc->qpm;
+    // 704x1280p = 44x80 mb
+    if(((h->mb.i_mb_y)>20) && ((h->mb.i_mb_y)<40) \
+       && ((h->mb.i_mb_x)>11) && ((h->mb.i_mb_x)<22)){                  //
+        rc->qpm = 28;
     }
-    if( h->mb.i_mb_x != h->mb.i_mb_width - 1 )
-        return 0;
-
+    else{
+        rc->qpm = 50;
+    }
+//    if( h->mb.i_mb_x != h->mb.i_mb_width - 1 )
+//        return 0;
+    printf("x=%d, y=%d, qp=%.2f, vbv=%d\n",h->mb.i_mb_x,h->mb.i_mb_y,rc->qpm, rc->b_vbv);
     x264_emms();
     rc->qpa_rc += rc->qpm * h->mb.i_mb_width;
 
