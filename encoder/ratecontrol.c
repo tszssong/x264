@@ -1576,7 +1576,8 @@ static float predict_row_size_to_end( x264_t *h, int y, float qp )
 /* TODO:
  *  eliminate all use of qp in row ratecontrol: make it entirely qscale-based.
  *  make this function stop being needlessly O(N^2)
- *  update more often than once per row? */
+ *  update more often than once per row?
+ *  do not change qpm here*/
 int x264_ratecontrol_mb( x264_t *h, int bits )
 {
     x264_ratecontrol_t *rc = h->rc;
@@ -1584,18 +1585,17 @@ int x264_ratecontrol_mb( x264_t *h, int bits )
 
     h->fdec->i_row_bits[y] += bits;
     rc->qpa_aq += h->mb.i_qp;
-//    int oldqp = rc->qpm;
-    // 704x1280p = 44x80 mb
-    if(((h->mb.i_mb_y)>20) && ((h->mb.i_mb_y)<40) \
-       && ((h->mb.i_mb_x)>11) && ((h->mb.i_mb_x)<22)){                  //
-        rc->qpm = 28;
-    }
-    else{
-        rc->qpm = 50;
-    }
-//    if( h->mb.i_mb_x != h->mb.i_mb_width - 1 )
-//        return 0;
-    printf("x=%d, y=%d, qp=%.2f, vbv=%d\n",h->mb.i_mb_x,h->mb.i_mb_y,rc->qpm, rc->b_vbv);
+// 704x1280p = 44x80 mb
+//    if(((h->mb.i_mb_y)>20) && ((h->mb.i_mb_y)<40) \
+//       && ((h->mb.i_mb_x)>11) && ((h->mb.i_mb_x)<22)){                  //
+//        rc->qpm = 28;
+//    }
+//    else{
+//        rc->qpm = 50;
+//    }
+    if( h->mb.i_mb_x != h->mb.i_mb_width - 1 )
+        return 0;
+//    printf("x=%d, y=%d, qp=%.2f, vbv=%d\n",h->mb.i_mb_x,h->mb.i_mb_y,rc->qpm, rc->b_vbv);
     x264_emms();
     rc->qpa_rc += rc->qpm * h->mb.i_mb_width;
 
@@ -1757,6 +1757,10 @@ int x264_ratecontrol_mb_qp( x264_t *h )
         if( qp > QP_MAX_SPEC )
             qp_offset *= (QP_MAX - qp) / (QP_MAX - QP_MAX_SPEC);
         qp += qp_offset;
+    }
+    if(((h->mb.i_mb_y)>20) && ((h->mb.i_mb_y)<40) \
+      && ((h->mb.i_mb_x)>11) && ((h->mb.i_mb_x)<22)){
+       qp = 28;
     }
     return x264_clip3( qp + 0.5f, h->param.rc.i_qp_min, h->param.rc.i_qp_max );
 }
