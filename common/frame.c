@@ -401,6 +401,10 @@ int x264_frame_copy_picture( x264_t *h, x264_frame_t *dst, x264_picture_t *src )
     dst->opaque     = src->opaque;
     dst->mb_info    = h->param.analyse.b_mb_info ? src->prop.mb_info : NULL;
     dst->mb_info_free = h->param.analyse.b_mb_info ? src->prop.mb_info_free : NULL;
+    dst->roi.i_roi_y1 = src->roi.y1;
+    dst->roi.i_roi_x1 = src->roi.x1;
+    dst->roi.i_roi_x2 = src->roi.x2;
+    dst->roi.i_roi_y2 = src->roi.y2;
 
     uint8_t *pix[3];
     int stride[3];

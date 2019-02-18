@@ -801,6 +801,12 @@ typedef struct x264_image_properties_t
 
 typedef struct x264_picture_t
 {
+    struct{
+        int x1;
+        int x2;
+        int y1;
+        int y2;
+    }roi;
     /* In: force picture type (if not auto)
      *     If x264 encoding parameters are violated in the forcing of picture types,
      *     x264 will correct the input picture type and log a warning.

@@ -1840,7 +1840,47 @@ static void parse_qpfile( cli_opt_t *opt, x264_picture_t *pic, int i_frame )
         }
     }
 }
-
+static void parse_roifile( cli_opt_t *opt, x264_picture_t *pic, int i_frame )
+{
+    int num = -1;
+    int x1, x2, y1, y2;
+    while( num < i_frame )
+    {
+        int64_t file_pos = ftell( opt->qpfile );
+        int qp = -1;
+        int ret = fscanf( opt->qpfile, "%d %d %d %d %d\n", &num, &x1, &y1, &x2, &y2 );
+        pic->i_type = X264_TYPE_AUTO;
+        pic->i_qpplus1 = X264_QP_AUTO;
+        if( num > i_frame || ret == EOF )
+        {
+            if( file_pos < 0 || fseek( opt->qpfile, file_pos, SEEK_SET ) )
+            {
+                x264_cli_log( "x264", X264_LOG_ERROR, "qpfile seeking failed\n" );
+                fclose( opt->qpfile );
+                opt->qpfile = NULL;
+            }
+            break;
+        }
+        if( num < i_frame && ret >= 2 )
+            continue;
+        if( ret == 5 && x1 >= 0 )
+            pic->roi.x1 = x1;
+        if( ret == 5 && y1 >= 0 )
+            pic->roi.y1 = y1;
+        if( ret == 5 && x2 >= 0 )
+            pic->roi.x2 = x2;
+        if( ret == 5 && y2 >= 0 )
+            pic->roi.y2 = y2;
+        
+        if( ret < 5 || qp < -1 || qp > QP_MAX )
+        {
+            x264_cli_log( "x264", X264_LOG_ERROR, "can't parse qpfile for frame %d\n", i_frame );
+            fclose( opt->qpfile );
+            opt->qpfile = NULL;
+            break;
+        }
+    }
+}
 static int encode_frame( x264_t *h, hnd_t hout, x264_picture_t *pic, int64_t *last_dts )
 {
     x264_picture_t pic_out;
@@ -2011,7 +2051,9 @@ static int encode( x264_param_t *param, cli_opt_t *opt )
             fprintf( opt->tcfile_out, "%.6f\n", pic.i_pts * ((double)param->i_timebase_num / param->i_timebase_den) * 1e3 );
 
         if( opt->qpfile )
-            parse_qpfile( opt, &pic, i_frame + opt->i_seek );
+//            parse_qpfile( opt, &pic, i_frame + opt->i_seek );
+            parse_roifile( opt, &pic, i_frame + opt->i_seek );
+            
 
         prev_dts = last_dts;
         i_frame_size = encode_frame( h, opt->hout, &pic, &last_dts );
