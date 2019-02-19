@@ -6,10 +6,15 @@
 	objectVersion = 50;
 	objects = {
 
+/* Begin PBXFileReference section */
+		FADC4178221588BB0026F29A /* my_x264_xcode */ = {isa = PBXFileReference; lastKnownFileType = folder; name = my_x264_xcode; path = ..; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
 /* Begin PBXGroup section */
 		FADC416D221588070026F29A = {
 			isa = PBXGroup;
 			children = (
+				FADC4178221588BB0026F29A /* my_x264_xcode */,
 			);
 			sourceTree = "<group>";
 		};
@@ -23,6 +28,7 @@
 			buildPhases = (
 			);
 			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = /Users/momo/wkspace/videoQ/x264_xcode;
 			dependencies = (
 			);
 			name = xcode264;
