@@ -154,6 +154,7 @@ typedef struct {
     hnd_t hin;
     hnd_t hout;
     FILE *qpfile;
+    FILE *roifile;
     FILE *tcfile_out;
     double timebase_convert_multiplier;
     int i_pulldown;
@@ -989,6 +990,7 @@ typedef enum
     OPT_FRAMES = 256,
     OPT_SEEK,
     OPT_QPFILE,
+    OPT_ROIFILE,
     OPT_THREAD_INPUT,
     OPT_QUIET,
     OPT_NOPROGRESS,
@@ -1124,6 +1126,7 @@ static struct option long_options[] =
     { "cplxblur",    required_argument, NULL, 0 },
     { "zones",       required_argument, NULL, 0 },
     { "qpfile",      required_argument, NULL, OPT_QPFILE },
+    { "roifile",     required_argument, NULL, OPT_ROIFILE },
     { "threads",     required_argument, NULL, 0 },
     { "lookahead-threads", required_argument, NULL, 0 },
     { "sliced-threads",    no_argument, NULL, 0 },
@@ -1489,12 +1492,24 @@ static int parse( int argc, char **argv, x264_param_t *param, cli_opt_t *opt )
                 input_opt.index_file = optarg;
                 break;
             case OPT_QPFILE:
+                printf("[ds]user defined type and qp: %s\n",optarg);
                 opt->qpfile = x264_fopen( optarg, "rb" );
                 FAIL_IF_ERROR( !opt->qpfile, "can't open qpfile `%s'\n", optarg );
                 if( !x264_is_regular_file( opt->qpfile ) )
                 {
                     x264_cli_log( "x264", X264_LOG_ERROR, "qpfile incompatible with non-regular file `%s'\n", optarg );
                     fclose( opt->qpfile );
+                    return -1;
+                }
+                break;
+            case OPT_ROIFILE:
+                printf("[ds]user defined roi: %s\n",optarg);
+                opt->roifile = x264_fopen( optarg, "rb" );
+                FAIL_IF_ERROR( !opt->roifile, "can't open roifile `%s'\n", optarg );
+                if( !x264_is_regular_file( opt->roifile ) )
+                {
+                    x264_cli_log( "x264", X264_LOG_ERROR, "roifile incompatible with non-regular file `%s'\n", optarg );
+                    fclose( opt->roifile );
                     return -1;
                 }
                 break;
@@ -1846,18 +1861,15 @@ static void parse_roifile( cli_opt_t *opt, x264_picture_t *pic, int i_frame )
     int x1, x2, y1, y2;
     while( num < i_frame )
     {
-        int64_t file_pos = ftell( opt->qpfile );
-        int qp = -1;
-        int ret = fscanf( opt->qpfile, "%d %d %d %d %d\n", &num, &x1, &y1, &x2, &y2 );
-        pic->i_type = X264_TYPE_AUTO;
-        pic->i_qpplus1 = X264_QP_AUTO;
+        int64_t file_pos = ftell( opt->roifile );
+        int ret = fscanf( opt->roifile, "%d %d %d %d %d\n", &num, &x1, &y1, &x2, &y2 );
         if( num > i_frame || ret == EOF )
         {
-            if( file_pos < 0 || fseek( opt->qpfile, file_pos, SEEK_SET ) )
+            if( file_pos < 0 || fseek( opt->roifile, file_pos, SEEK_SET ) )
             {
                 x264_cli_log( "x264", X264_LOG_ERROR, "qpfile seeking failed\n" );
-                fclose( opt->qpfile );
-                opt->qpfile = NULL;
+                fclose( opt->roifile );
+                opt->roifile = NULL;
             }
             break;
         }
@@ -1872,11 +1884,11 @@ static void parse_roifile( cli_opt_t *opt, x264_picture_t *pic, int i_frame )
         if( ret == 5 && y2 >= 0 )
             pic->roi.y2 = y2;
         
-        if( ret < 5 || qp < -1 || qp > QP_MAX )
+        if( ret < 5 || x1<0 || x2<0 ||y1<0 || y2<0 )
         {
-            x264_cli_log( "x264", X264_LOG_ERROR, "can't parse qpfile for frame %d\n", i_frame );
-            fclose( opt->qpfile );
-            opt->qpfile = NULL;
+            x264_cli_log( "x264", X264_LOG_ERROR, "can't parse roifile for frame %d\n", i_frame );
+            fclose( opt->roifile );
+            opt->roifile = NULL;
             break;
         }
     }
@@ -2051,7 +2063,8 @@ static int encode( x264_param_t *param, cli_opt_t *opt )
             fprintf( opt->tcfile_out, "%.6f\n", pic.i_pts * ((double)param->i_timebase_num / param->i_timebase_den) * 1e3 );
 
         if( opt->qpfile )
-//            parse_qpfile( opt, &pic, i_frame + opt->i_seek );
+            parse_qpfile( opt, &pic, i_frame + opt->i_seek );
+        if(opt->roifile)
             parse_roifile( opt, &pic, i_frame + opt->i_seek );
             
 
