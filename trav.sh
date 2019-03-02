@@ -1,5 +1,5 @@
 mkdir ./data/$1
-for line in `cat data/2k1face.txt`
+for line in `cat data/2k1face2.txt`
 do
 flvname=${line}".flv"
 txtname=${line}".txt"

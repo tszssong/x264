@@ -1,4 +1,4 @@
-dir="/Volumes/song/videoQ_data/3/"
+dir="/Volumes/song/videoQ_data/shortVideo/"
 mkdir $dir"roi"$1"_"$2
 for line in `cat $dir/$1.txt`
 do
