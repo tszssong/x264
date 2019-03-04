@@ -1770,16 +1770,17 @@ int x264_ratecontrol_mb_qp( x264_t *h )
     int mb_x2 = h->fenc->roi.i_roi_x2/16+1 < h->mb.i_mb_width ? h->fenc->roi.i_roi_x2/16 + 1 : h->mb.i_mb_width;
     int mb_y1 = h->fenc->roi.i_roi_y1/16-1 > 0 ? h->fenc->roi.i_roi_y1/16 - 1 : 0;
     int mb_y2 = h->fenc->roi.i_roi_y2/16+1 < h->mb.i_mb_height ? h->fenc->roi.i_roi_y2/16 + 1 : h->mb.i_mb_height;
-    int ux = mb_x1+(mb_x2-mb_x1)/2;
-    int uy = mb_y1+(mb_y2-mb_y1)/2;
-    float rx = (mb_x2-mb_x1)/2;
-    float ry = (mb_y2-mb_y1)/2;
-    float d_qp = 18*exp(-((h->mb.i_mb_x-ux)*(h->mb.i_mb_x-ux)/2/rx/rx)-((h->mb.i_mb_y-uy)*(h->mb.i_mb_y-uy))/2/ry/ry);
-    qp-=d_qp;
+    if(mb_x1!=0 && mb_x2!=0 && mb_y1!=0 && mb_y2!=0){
+        int ux = mb_x1+(mb_x2-mb_x1)/2;
+        int uy = mb_y1+(mb_y2-mb_y1)/2;
+        float rx = (mb_x2-mb_x1)/2+0.001;  //avoid divid 0
+        float ry = (mb_y2-mb_y1)/2+0.001;
+        float d_qp = 18*exp(-((h->mb.i_mb_x-ux)*(h->mb.i_mb_x-ux)/2/rx/rx)-((h->mb.i_mb_y-uy)*(h->mb.i_mb_y-uy))/2/ry/ry);
+        qp-=d_qp;
+    }
 //    if(((h->mb.i_mb_y)>mb_y1) && ((h->mb.i_mb_y)<mb_y2) \
-       && ((h->mb.i_mb_x)>mb_x1) && ((h->mb.i_mb_x)<mb_x2)){
+//       && ((h->mb.i_mb_x)>mb_x1) && ((h->mb.i_mb_x)<mb_x2)){
 //        qp -= 18;
-//        printf("%3d,%3d:%.3f\n",h->mb.i_mb_x, h->mb.i_mb_y, qp);
 //    }
     return x264_clip3( qp + 0.5f, h->param.rc.i_qp_min, h->param.rc.i_qp_max );
 }

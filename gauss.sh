@@ -1,4 +1,4 @@
-dir="/Volumes/song/videoQ_data/shortVideo/"
+dir="//Users/momo/Desktop/testVideosOut/face/"
 mkdir $dir"gauss"$1"_"$2
 for line in `cat $dir/$1.txt`
 do
