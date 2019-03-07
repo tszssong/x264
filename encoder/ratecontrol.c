@@ -1775,7 +1775,7 @@ int x264_ratecontrol_mb_qp( x264_t *h )
         int uy = mb_y1+(mb_y2-mb_y1)/2;
         float rx = (mb_x2-mb_x1)/2+0.001;  //avoid divid 0
         float ry = (mb_y2-mb_y1)/2+0.001;
-        float d_qp = 18*exp(-((h->mb.i_mb_x-ux)*(h->mb.i_mb_x-ux)/2/rx/rx)-((h->mb.i_mb_y-uy)*(h->mb.i_mb_y-uy))/2/ry/ry);
+        float d_qp = 28*exp(-((h->mb.i_mb_x-ux)*(h->mb.i_mb_x-ux)/2/rx/rx)-((h->mb.i_mb_y-uy)*(h->mb.i_mb_y-uy))/2/ry/ry);
         qp-=d_qp;
     }
 //    if(((h->mb.i_mb_y)>mb_y1) && ((h->mb.i_mb_y)<mb_y2) \
