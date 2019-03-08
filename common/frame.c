@@ -405,7 +405,30 @@ int x264_frame_copy_picture( x264_t *h, x264_frame_t *dst, x264_picture_t *src )
     dst->roi.i_roi_x1 = src->roi.x1;
     dst->roi.i_roi_x2 = src->roi.x2;
     dst->roi.i_roi_y2 = src->roi.y2;
-
+    const int SALIENT_PIC_SIZE = h->param.i_width * h->param.i_height; //frame size
+    printf("frame size:%d,%d,%d\n", SALIENT_PIC_SIZE, h->param.i_width, h->param.i_height);
+    dst->salient = (int *)malloc(sizeof(int)*SALIENT_PIC_SIZE +1);
+    if(dst->salient==NULL) return -1;
+    int *p_dst = dst->salient;
+    int *p_src = src->salient.salient;
+    printf("memory malloced: 0x%x, 0x%x\n",p_dst, p_src);
+    int a = 0;
+    *p_dst = a;
+//    for(int i=0;i<SALIENT_PIC_SIZE;i++){
+//        a = *(p_src++);
+//        a = 234;
+//        *(p_dst++) = a;
+//    }
+//    a = 0;
+//    for(int i=0;i<SALIENT_PIC_SIZE;i++)
+//        *p_dst++ = a;
+//    printf("%d ",a);
+//    printf("%d ",*p_src);
+//    for(int i=0;i<SALIENT_PIC_SIZE;i++){
+//        *p_dst++ = *p_src++;
+//    }
+//    printf("last salient data = %d ", *(dst->salient));
+//    dst->salient = src->salient.salient;     //TODO: use plane copy!
     uint8_t *pix[3];
     int stride[3];
     if( i_csp == X264_CSP_YUYV || i_csp == X264_CSP_UYVY )

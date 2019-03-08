@@ -745,7 +745,7 @@ typedef struct x264_image_t
     
 typedef struct x264_salient_t
 {
-    int *data;          /* Pointers to salint data */
+    int *salient;          /* Pointers to salint data */
 } x264_salient_t;
 
 typedef struct x264_image_properties_t
