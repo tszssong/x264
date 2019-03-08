@@ -742,6 +742,11 @@ typedef struct x264_image_t
     int     i_stride[4]; /* Strides for each plane */
     uint8_t *plane[4];   /* Pointers to each plane */
 } x264_image_t;
+    
+typedef struct x264_salient_t
+{
+    int *data;          /* Pointers to salint data */
+} x264_salient_t;
 
 typedef struct x264_image_properties_t
 {
@@ -838,6 +843,8 @@ typedef struct x264_picture_t
             e.g. deblocking, in frames where it isn't necessary.  To force complete
             reconstruction, at a small speed cost, set b_full_recon. */
     x264_image_t img;
+    /* In: salient data */
+    x264_salient_t salient;
     /* In: optional information to modify encoder decisions for this frame
      * Out: information about the encoded frame */
     x264_image_properties_t prop;

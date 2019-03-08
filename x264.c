@@ -1917,14 +1917,21 @@ int parse_salientfile(x264_param_t *param, cli_opt_t *opt, x264_picture_t *pic, 
         return -1;
     }
     const int SALIENT_PIC_SIZE = param->i_width * param->i_height;
-    printf("size = %d, %d, %d\n", SALIENT_PIC_SIZE, param->i_width, param->i_height);
-    int *salient = (char *)malloc(sizeof(int)*SALIENT_PIC_SIZE +1);
-    if (salient==NULL) return -1;
+//    printf("size = %d, %d, %d\n", SALIENT_PIC_SIZE, param->i_width, param->i_height);
+    pic->salient.data = (int *)malloc(sizeof(int)*SALIENT_PIC_SIZE +1);
+    if(pic->salient.data==NULL) return -1;
     for(int i=0;i<SALIENT_PIC_SIZE;i++){
-        fscanf(fpRead, "%d ", salient);
-        salient++;
+        fscanf(fpRead, "%d ", pic->salient.data);
+        pic->salient.data++;
     }
-    printf("last salient data = %d ", *(salient-1));
+    printf("last salient data = %d ", *(pic->salient.data-1));
+//    int *salient = (int *)malloc(sizeof(int)*SALIENT_PIC_SIZE +1);
+//    if (salient==NULL) return -1;
+//    for(int i=0;i<SALIENT_PIC_SIZE;i++){
+//        fscanf(fpRead, "%d ", salient);
+//        salient++;
+//    }
+//    printf("last salient data = %d ", *(salient-1));
 }
 static int encode_frame( x264_t *h, hnd_t hout, x264_picture_t *pic, int64_t *last_dts )
 {
