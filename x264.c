@@ -1903,7 +1903,7 @@ static void parse_roifile( cli_opt_t *opt, x264_picture_t *pic, int i_frame )
         }
     }
 }
-int parse_salientfile(cli_opt_t *opt, x264_picture_t *pic, int i_frame ){
+int parse_salientfile(x264_param_t *param, cli_opt_t *opt, x264_picture_t *pic, int i_frame ){
     char filename[10];   // 6(max 999999 frames)+4(.txt)
     sprintf(filename, "%d.txt", i_frame);
     char *filepath = (char *)malloc(sizeof(char)*(strlen(opt->salientpath)+strlen(filename) +1 ));
@@ -1911,20 +1911,20 @@ int parse_salientfile(cli_opt_t *opt, x264_picture_t *pic, int i_frame ){
     strcpy( filepath, opt->salientpath );
     strcat(filepath, filename);
     printf("[ds] use salient file %s for frame %d\n", filepath ,i_frame);
-
     FILE *fpRead = fopen(filepath, "r");
     if(fpRead==NULL) {
         printf("[ds] read salint file error!\n");
         return -1;
     }
-    int *salient = (char *)malloc(sizeof(int)*(1080*1920) +1);
+    const int SALIENT_PIC_SIZE = param->i_width * param->i_height;
+    printf("size = %d, %d, %d\n", SALIENT_PIC_SIZE, param->i_width, param->i_height);
+    int *salient = (char *)malloc(sizeof(int)*SALIENT_PIC_SIZE +1);
     if (salient==NULL) return -1;
-//    fgets(salient, (1080*1920), fpRead);
-    for(int i=0;i<(1080*1920);i++){
+    for(int i=0;i<SALIENT_PIC_SIZE;i++){
         fscanf(fpRead, "%d ", salient);
         salient++;
     }
-    printf("%d ", *(salient-1));
+    printf("last salient data = %d ", *(salient-1));
 }
 static int encode_frame( x264_t *h, hnd_t hout, x264_picture_t *pic, int64_t *last_dts )
 {
@@ -2100,7 +2100,7 @@ static int encode( x264_param_t *param, cli_opt_t *opt )
         if( opt->roifile )
             parse_roifile( opt, &pic, i_frame + opt->i_seek );
         if( opt->salientpath )
-            parse_salientfile(opt, &pic, i_frame + opt->i_seek );
+            parse_salientfile(param, opt, &pic, i_frame + opt->i_seek );
 
         prev_dts = last_dts;
         i_frame_size = encode_frame( h, opt->hout, &pic, &last_dts );
