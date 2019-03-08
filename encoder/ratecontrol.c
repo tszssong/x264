@@ -1585,17 +1585,8 @@ int x264_ratecontrol_mb( x264_t *h, int bits )
 
     h->fdec->i_row_bits[y] += bits;
     rc->qpa_aq += h->mb.i_qp;
-// 704x1280p = 44x80 mb
-//    if(((h->mb.i_mb_y)>20) && ((h->mb.i_mb_y)<40) \
-//       && ((h->mb.i_mb_x)>11) && ((h->mb.i_mb_x)<22)){                  //
-//        rc->qpm = 28;
-//    }
-//    else{
-//        rc->qpm = 50;
-//    }
     if( h->mb.i_mb_x != h->mb.i_mb_width - 1 )
         return 0;
-//    printf("x=%d, y=%d, qp=%.2f, vbv=%d\n",h->mb.i_mb_x,h->mb.i_mb_y,rc->qpm, rc->b_vbv);
     x264_emms();
     rc->qpa_rc += rc->qpm * h->mb.i_mb_width;
 
@@ -1748,6 +1739,11 @@ int x264_ratecontrol_qp( x264_t *h )
 int x264_ratecontrol_mb_qp( x264_t *h )
 {
     x264_emms();
+//    printf("fenc.i_csp=%d, fenc.i_plane=%d, fenc.i_stride=%d,%d,%d\n",h->fenc->i_csp, h->fenc->i_plane, h->fenc->i_stride[0], h->fenc->i_stride[1], h->fenc->i_stride[2]);
+//    printf("fenc.i_width=%d,%d,%d\n",h->fenc->i_width[0],h->fenc->i_width[1],h->fenc->i_width[2]);
+//    printf("fenc.i_lines=%d,%d,%d\n",h->fenc->i_lines[0],h->fenc->i_lines[1],h->fenc->i_lines[2]);
+//    printf("fenc.i_stride_lowres=%d, fenc.i_width_lowres=%d,fenc.i_lines_lowres=%d\n", \
+           h->fenc->i_stride_lowres,h->fenc->i_width_lowres,h->fenc->i_lines_lowres);
     float qp = h->rc->qpm;
     if( h->param.rc.i_aq_mode )
     {
