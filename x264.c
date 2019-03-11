@@ -1904,11 +1904,12 @@ static void parse_roifile( cli_opt_t *opt, x264_picture_t *pic, int i_frame )
     }
 }
 static void parse_salientfile(x264_param_t *param, cli_opt_t *opt, x264_picture_t *pic, int i_frame ){
-    if(i_frame ==0) return;
+    // if(i_frame ==0) return;
     char filename[10];   // 6(max 999999 frames)+4(.txt)
     sprintf(filename, "%d.txt", i_frame);
     char *filepath = (char *)malloc(sizeof(char)*(strlen(opt->salientpath)+strlen(filename) +1 ));
     if(filepath == NULL){
+        pic->salient.b_has_salient = 0;
         printf("[ds] salint file %d do not exist !\n", i_frame);
         return;
     }
@@ -1917,6 +1918,7 @@ static void parse_salientfile(x264_param_t *param, cli_opt_t *opt, x264_picture_
     printf("[ds] use salient file %s for frame %d\n", filepath ,i_frame);
     FILE *fpRead = fopen(filepath, "r");
     if(fpRead==NULL) {
+        pic->salient.b_has_salient = 0;
         printf("[ds] read salint file %d error!\n", i_frame);
         return;
     }
@@ -1924,15 +1926,17 @@ static void parse_salientfile(x264_param_t *param, cli_opt_t *opt, x264_picture_
 //    printf("size = %d, %d, %d\n", SALIENT_PIC_SIZE, param->i_width, param->i_height);
     pic->salient.salient = (unsigned char *)malloc(sizeof(unsigned char)*SALIENT_PIC_SIZE +4);
     if(pic->salient.salient==NULL){
+        pic->salient.b_has_salient = 0;
         printf("[ds] salint %d have no space!\n", i_frame);
         return;
     }
-    for(int i=0;i<SALIENT_PIC_SIZE/2;i++){
+    for(int i=0;i<SALIENT_PIC_SIZE;i++){
         //TODO: read string, then stoi
         fscanf(fpRead, "%c ", pic->salient.salient);
         pic->salient.salient++;
     }
     pic->salient.salient -= SALIENT_PIC_SIZE;
+    pic->salient.b_has_salient = 1;   //good init for salient
 //    if(i_frame == 1){
 //        for(int i=0;i<SALIENT_PIC_SIZE;i++){
 //            printf("%c ", *pic->salient.salient);

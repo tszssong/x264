@@ -41,7 +41,8 @@ typedef struct x264_frame
         int     i_roi_x1;
         int     i_roi_x2;
     }roi;
-    uint8_t *salient;        /* salient data*/
+    int     b_has_salient;  /* has salient data*/
+    uint8_t *salient;       /* salient data*/
     uint8_t *base;       /* Base pointer for all malloced data in this frame. */
     int     i_poc;
     int     i_delta_poc[2];

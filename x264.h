@@ -745,6 +745,7 @@ typedef struct x264_image_t
     
 typedef struct x264_salient_t
 {
+    int     b_has_salient;     /* has salient data*/
     uint8_t *salient;          /* Pointers to salint data */
 } x264_salient_t;
 
@@ -812,6 +813,8 @@ typedef struct x264_picture_t
         int y1;
         int y2;
     }roi;
+    /* In: salient data */
+    x264_salient_t salient;
     /* In: force picture type (if not auto)
      *     If x264 encoding parameters are violated in the forcing of picture types,
      *     x264 will correct the input picture type and log a warning.
@@ -843,8 +846,6 @@ typedef struct x264_picture_t
             e.g. deblocking, in frames where it isn't necessary.  To force complete
             reconstruction, at a small speed cost, set b_full_recon. */
     x264_image_t img;
-    /* In: salient data */
-    x264_salient_t salient;
     /* In: optional information to modify encoder decisions for this frame
      * Out: information about the encoded frame */
     x264_image_properties_t prop;
