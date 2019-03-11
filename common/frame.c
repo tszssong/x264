@@ -407,28 +407,14 @@ int x264_frame_copy_picture( x264_t *h, x264_frame_t *dst, x264_picture_t *src )
     dst->roi.i_roi_y2 = src->roi.y2;
     const int SALIENT_PIC_SIZE = h->param.i_width * h->param.i_height; //frame size
     printf("frame size:%d,%d,%d\n", SALIENT_PIC_SIZE, h->param.i_width, h->param.i_height);
-    dst->salient = (int *)malloc(sizeof(int)*SALIENT_PIC_SIZE +1);
-    if(dst->salient==NULL) return -1;
-    int *p_dst = dst->salient;
-    int *p_src = src->salient.salient;
-    printf("memory malloced: 0x%x, 0x%x\n",p_dst, p_src);
-    int a = 0;
-    *p_dst = a;
-//    for(int i=0;i<SALIENT_PIC_SIZE;i++){
-//        a = *(p_src++);
-//        a = 234;
-//        *(p_dst++) = a;
-//    }
-//    a = 0;
-//    for(int i=0;i<SALIENT_PIC_SIZE;i++)
-//        *p_dst++ = a;
-//    printf("%d ",a);
-//    printf("%d ",*p_src);
-//    for(int i=0;i<SALIENT_PIC_SIZE;i++){
-//        *p_dst++ = *p_src++;
-//    }
-//    printf("last salient data = %d ", *(dst->salient));
-//    dst->salient = src->salient.salient;     //TODO: use plane copy!
+    if(dst->i_frame > 0){   //0frame file not exist
+        unsigned char *src_salient = src->salient.salient;
+        printf("src adr: 0x%x", src_salient);
+        for(int i=0;i<SALIENT_PIC_SIZE;i++){
+            printf("%c ", *src_salient);
+            src_salient++;
+        }
+    }
     uint8_t *pix[3];
     int stride[3];
     if( i_csp == X264_CSP_YUYV || i_csp == X264_CSP_UYVY )

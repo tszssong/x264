@@ -1903,28 +1903,44 @@ static void parse_roifile( cli_opt_t *opt, x264_picture_t *pic, int i_frame )
         }
     }
 }
-int parse_salientfile(x264_param_t *param, cli_opt_t *opt, x264_picture_t *pic, int i_frame ){
+static void parse_salientfile(x264_param_t *param, cli_opt_t *opt, x264_picture_t *pic, int i_frame ){
+    if(i_frame ==0) return;
     char filename[10];   // 6(max 999999 frames)+4(.txt)
     sprintf(filename, "%d.txt", i_frame);
     char *filepath = (char *)malloc(sizeof(char)*(strlen(opt->salientpath)+strlen(filename) +1 ));
-    if(filepath == NULL) return -1;
+    if(filepath == NULL){
+        printf("[ds] salint file %d do not exist !\n", i_frame);
+        return;
+    }
     strcpy( filepath, opt->salientpath );
     strcat(filepath, filename);
     printf("[ds] use salient file %s for frame %d\n", filepath ,i_frame);
     FILE *fpRead = fopen(filepath, "r");
     if(fpRead==NULL) {
-        printf("[ds] read salint file error!\n");
-        return -1;
+        printf("[ds] read salint file %d error!\n", i_frame);
+        return;
     }
     const int SALIENT_PIC_SIZE = param->i_width * param->i_height;
 //    printf("size = %d, %d, %d\n", SALIENT_PIC_SIZE, param->i_width, param->i_height);
-    pic->salient.salient = (int *)malloc(sizeof(int)*SALIENT_PIC_SIZE +1);
-    if(pic->salient.salient==NULL) return -1;
-    for(int i=0;i<SALIENT_PIC_SIZE;i++){
-        fscanf(fpRead, "%d ", pic->salient.salient);
+    pic->salient.salient = (unsigned char *)malloc(sizeof(unsigned char)*SALIENT_PIC_SIZE +4);
+    if(pic->salient.salient==NULL){
+        printf("[ds] salint %d have no space!\n", i_frame);
+        return;
+    }
+    for(int i=0;i<SALIENT_PIC_SIZE/2;i++){
+        //TODO: read string, then stoi
+        fscanf(fpRead, "%c ", pic->salient.salient);
         pic->salient.salient++;
     }
-    printf("last salient data = %d ", *(pic->salient.salient-1));
+    pic->salient.salient -= SALIENT_PIC_SIZE;
+//    if(i_frame == 1){
+//        for(int i=0;i<SALIENT_PIC_SIZE;i++){
+//            printf("%c ", *pic->salient.salient);
+//            pic->salient.salient++;
+//            if(i%param->i_width==0) printf("\n");
+//        }
+//    }
+    
 }
 static int encode_frame( x264_t *h, hnd_t hout, x264_picture_t *pic, int64_t *last_dts )
 {
@@ -2116,7 +2132,7 @@ static int encode( x264_param_t *param, cli_opt_t *opt )
             if( i_frame_output == 1 )
                 first_dts = prev_dts = last_dts;
         }
-
+        printf("frame released:0x%x\n",opt->hin);
         if( filter.release_frame( opt->hin, &cli_pic, i_frame + opt->i_seek ) )
             break;
 

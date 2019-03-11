@@ -106,6 +106,7 @@ static int read_frame_internal( cli_pic_t *p_pic, lavf_hnd_t *h, int i_frame, vi
 
         while( (ret = avcodec_receive_frame( h->lavc, h->frame )) )
         {
+            printf("ret=%d\n",ret);
             if( ret == AVERROR(EAGAIN) )
             {
                 while( !(ret = av_read_frame( h->lavf, &pkt )) && pkt.stream_index != h->stream_id )

@@ -1754,9 +1754,9 @@ int x264_ratecontrol_mb_qp( x264_t *h )
             qp_offset *= (QP_MAX - qp) / (QP_MAX - QP_MAX_SPEC);
         qp += qp_offset;
     }
-    printf("salient data addr: %d\n", h->fenc->salient);
-    int *salient = h->fenc->salient;
-    printf("salient data: %d\n", *salient++);
+//    printf("salient data addr: %d\n", h->fenc->salient);
+//    int *salient = h->fenc->salient;
+//    printf("salient data: %d\n", *salient++);
     return x264_clip3( qp + 0.5f, h->param.rc.i_qp_min, h->param.rc.i_qp_max );
 }
 
