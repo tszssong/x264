@@ -1758,14 +1758,6 @@ int x264_ratecontrol_mb_qp( x264_t *h )
             qp_offset *= (QP_MAX - qp) / (QP_MAX - QP_MAX_SPEC);
         qp += qp_offset;
     }
-//    if(((h->mb.i_mb_y)>20) && ((h->mb.i_mb_y)<40) \
-//      && ((h->mb.i_mb_x)>11) && ((h->mb.i_mb_x)<22)){
-//       qp = 28;
-//    }
-//    if(((h->mb.i_mb_y)>h->fenc->roi.i_roi_y1) && ((h->mb.i_mb_y)<h->fenc->roi.i_roi_y2) \
-//        && ((h->mb.i_mb_x)>h->fenc->roi.i_roi_x1) && ((h->mb.i_mb_x)<h->fenc->roi.i_roi_x2)){
-//        qp = 28;
-//    }     
     int mb_x1 = h->fenc->roi.i_roi_x1/16-1 > 0 ? h->fenc->roi.i_roi_x1/16-1 : 0;
     int mb_x2 = h->fenc->roi.i_roi_x2/16+1 < h->mb.i_mb_width ? h->fenc->roi.i_roi_x2/16 + 1 : h->mb.i_mb_width;
     int mb_y1 = h->fenc->roi.i_roi_y1/16-1 > 0 ? h->fenc->roi.i_roi_y1/16 - 1 : 0;
@@ -1778,10 +1770,6 @@ int x264_ratecontrol_mb_qp( x264_t *h )
         float d_qp = 28*exp(-((h->mb.i_mb_x-ux)*(h->mb.i_mb_x-ux)/2/rx/rx)-((h->mb.i_mb_y-uy)*(h->mb.i_mb_y-uy))/2/ry/ry);
         qp-=d_qp;
     }
-//    if(((h->mb.i_mb_y)>mb_y1) && ((h->mb.i_mb_y)<mb_y2) \
-//       && ((h->mb.i_mb_x)>mb_x1) && ((h->mb.i_mb_x)<mb_x2)){
-//        qp -= 18;
-//    }
     return x264_clip3( qp + 0.5f, h->param.rc.i_qp_min, h->param.rc.i_qp_max );
 }
 

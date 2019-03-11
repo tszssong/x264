@@ -1859,6 +1859,9 @@ static void parse_roifile( cli_opt_t *opt, x264_picture_t *pic, int i_frame )
 {
     int num = -1;
     int x1, x2, y1, y2;
+//    printf("i_csp=%d, i_plane=%d, i_stride=%d,%d,%d,%d\n", \
+           pic->img.i_csp, pic->img.i_plane, pic->img.i_stride[0], \
+           pic->img.i_stride[1],pic->img.i_stride[2],pic->img.i_stride[3]);
     while( num < i_frame )
     {
         int64_t file_pos = ftell( opt->roifile );
