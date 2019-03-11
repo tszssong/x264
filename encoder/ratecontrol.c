@@ -1739,10 +1739,10 @@ int x264_ratecontrol_qp( x264_t *h )
 int x264_ratecontrol_mb_qp( x264_t *h )
 {
     x264_emms();
-//    printf("fenc.i_csp=%d, fenc.i_plane=%d, fenc.i_stride=%d,%d,%d\n",h->fenc->i_csp, h->fenc->i_plane, h->fenc->i_stride[0], h->fenc->i_stride[1], h->fenc->i_stride[2]);
-//    printf("fenc.i_width=%d,%d,%d\n",h->fenc->i_width[0],h->fenc->i_width[1],h->fenc->i_width[2]);
-//    printf("fenc.i_lines=%d,%d,%d\n",h->fenc->i_lines[0],h->fenc->i_lines[1],h->fenc->i_lines[2]);
-//    printf("fenc.i_stride_lowres=%d, fenc.i_width_lowres=%d,fenc.i_lines_lowres=%d\n", \
+    printf("fenc.i_csp=%d, fenc.i_plane=%d, fenc.i_stride=%d,%d,%d\n",h->fenc->i_csp, h->fenc->i_plane, h->fenc->i_stride[0], h->fenc->i_stride[1], h->fenc->i_stride[2]);
+    printf("fenc.i_width=%d,%d,%d\n",h->fenc->i_width[0],h->fenc->i_width[1],h->fenc->i_width[2]);
+    printf("fenc.i_lines=%d,%d,%d\n",h->fenc->i_lines[0],h->fenc->i_lines[1],h->fenc->i_lines[2]);
+    printf("fenc.i_stride_lowres=%d, fenc.i_width_lowres=%d,fenc.i_lines_lowres=%d\n", \
            h->fenc->i_stride_lowres,h->fenc->i_width_lowres,h->fenc->i_lines_lowres);
     float qp = h->rc->qpm;
     if( h->param.rc.i_aq_mode )
@@ -1754,9 +1754,11 @@ int x264_ratecontrol_mb_qp( x264_t *h )
             qp_offset *= (QP_MAX - qp) / (QP_MAX - QP_MAX_SPEC);
         qp += qp_offset;
     }
-//    printf("salient data addr: %d\n", h->fenc->salient);
-//    int *salient = h->fenc->salient;
-//    printf("salient data: %d\n", *salient++);
+    if(h->fenc->b_has_salient){
+        printf("salient data addr: %d\n", h->fenc->salient);
+        unsigned char *salient = h->fenc->salient + h->fenc->i_width[0];
+        printf("salient data: %d\n", *salient);
+    }
     return x264_clip3( qp + 0.5f, h->param.rc.i_qp_min, h->param.rc.i_qp_max );
 }
 

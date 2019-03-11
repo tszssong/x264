@@ -409,16 +409,16 @@ int x264_frame_copy_picture( x264_t *h, x264_frame_t *dst, x264_picture_t *src )
     printf("frame size:%d,%d,%d\n", SALIENT_PIC_SIZE, h->param.i_width, h->param.i_height);
     dst->b_has_salient =src->salient.b_has_salient;
     if(dst->b_has_salient){   //0frame file not exist
-        unsigned char *src_salient = src->salient.salient;
-        printf("src adr: 0x%x", src_salient);
-        for(int i=0;i<SALIENT_PIC_SIZE;i++){
-            printf("%c ", *src_salient);
-            src_salient++;
-        }
+//        unsigned char *src_salient = src->salient.salient;
+//        printf("src adr: 0x%x", src_salient);
+//        for(int i=0;i<SALIENT_PIC_SIZE;i++){
+//            printf("%d ", *src_salient);
+//            src_salient++;
+//        }
         dst->salient = (unsigned char *)malloc(sizeof(unsigned char)*SALIENT_PIC_SIZE +4);
         if(dst->salient==NULL){
             dst->b_has_salient = 0;
-            printf("[ds] fenc salint %d no space!\n", dst->i_frame);
+            printf("[ds] fenc salint has no space!\n");
             return -1;
         }
         unsigned char *s_dst = dst->salient;
