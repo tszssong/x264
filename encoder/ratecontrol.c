@@ -1775,16 +1775,17 @@ int x264_ratecontrol_mb_qp( x264_t *h )
     mb_salient = mb_salient/h->mb.i_mb_width/h->mb.i_mb_height;  //average
     int salient_flag = mb_salient/51;
     float d_qp = 0;
+    float coef = 4;
     switch (salient_flag) {
-        case 0: d_qp = 5;break;
-        case 1: d_qp = 4;break;
-        case 2: d_qp = 3;break;
-        case 3: d_qp = 2;break;
-        case 4: d_qp = 1;break;
+        case 0: d_qp = 5*coef;break;
+        case 1: d_qp = 4*coef;break;
+        case 2: d_qp = 3*coef;break;
+        case 3: d_qp = 2*coef;break;
+        case 4: d_qp = 1*coef;break;
         default: break;
     }
     qp -= d_qp;
-    if(d_qp<5)
+    if(d_qp<5*coef)
         printf("%3d,%3d salient data addr: 0x%x, salient=%.2f, d_qp=%.2f, qp=%.2f\n" \
                ,h->mb.i_mb_y, h->mb.i_mb_x, h->fenc->salient, mb_salient, d_qp, qp);
     return x264_clip3( qp + 0.5f, h->param.rc.i_qp_min, h->param.rc.i_qp_max );

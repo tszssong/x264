@@ -1931,26 +1931,12 @@ static void parse_salientfile(x264_param_t *param, cli_opt_t *opt, x264_picture_
     }
     unsigned char *p_salient = pic->salient.salient;
     for(int i=0;i<SALIENT_PIC_SIZE;i++){
-        //TODO: read string, then stoi
         char c_in[2];
         fscanf(fpRead, "%s ", c_in);
-//        if(i_frame == 1)
-//            printf("%c%c ",c_in[0],c_in[1]);
-//        *pic->salient.salient++ = (c_in[0]-'0')*10 + c_in[1]-'0';
         int s = c_in[1] ? (c_in[1]-'0')*10 + c_in[0]-'0' : c_in[0]-'0';
-//        printf("%d,%d=%d  ",c_in[1],c_in[0],s);
         *p_salient++ = s;
     }
-//    pic->salient.salient -= SALIENT_PIC_SIZE;
     pic->salient.b_has_salient = 1;   //good init for salient
-//    if(i_frame == 1){
-//        for(int i=0;i<SALIENT_PIC_SIZE;i++){
-//            printf("%c ", *pic->salient.salient);
-//            pic->salient.salient++;
-//            if(i%param->i_width==0) printf("\n");
-//        }
-//    }
-    
 }
 static int encode_frame( x264_t *h, hnd_t hout, x264_picture_t *pic, int64_t *last_dts )
 {
@@ -2142,10 +2128,11 @@ static int encode( x264_param_t *param, cli_opt_t *opt )
             if( i_frame_output == 1 )
                 first_dts = prev_dts = last_dts;
         }
-        printf("frame released:0x%x\n",opt->hin);
         if( filter.release_frame( opt->hin, &cli_pic, i_frame + opt->i_seek ) )
             break;
-
+        free(pic.salient.salient);             // release salient data
+        pic.salient.salient=NULL;
+        pic.salient.b_has_salient = 0;
         /* update status line (up to 1000 times per input file) */
         if( opt->b_progress && i_frame_output )
             i_previous = print_status( i_start, i_previous, i_frame_output, param->i_frame_total, i_file, param, 2 * last_dts - prev_dts - first_dts );
