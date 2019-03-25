@@ -1769,13 +1769,22 @@ int x264_ratecontrol_mb_qp( x264_t *h )
         mb_salient = mb_salient/h->mb.i_mb_width/h->mb.i_mb_height;  //average
         int salient_flag = mb_salient/51;
         float d_qp = 0;
-        float coef = 1;
+        float coef = 1.0;
+//        switch (salient_flag) {             //1
+//            case 0: d_qp = 5*coef;break;
+//            case 1: d_qp = 3*coef;break;
+//            case 2: d_qp = 2*coef;break;
+//            case 3: d_qp = 1*coef;break;
+//            case 4: d_qp = 0*coef-0.5;break;
+//            default: break;
+//        }
         switch (salient_flag) {
-            case 0: d_qp = 5*coef;break;
-            case 1: d_qp = 3*coef;break;
-            case 2: d_qp = 2*coef;break;
-            case 3: d_qp = 1*coef;break;
-            case 4: d_qp = 0*coef;break;
+//            case 0: d_qp = 3*coef;break;    //V1
+            case 0: d_qp = 4*coef;break;    //V2
+            case 1: d_qp = 2*coef;break;
+            case 2: d_qp = 1*coef;break;
+            case 3: d_qp = 0*coef;break;
+            case 4: d_qp = -0.5;break;
             default: break;
         }
         qp += d_qp;
