@@ -1921,7 +1921,8 @@ static void parse_salientfile(x264_param_t *param, cli_opt_t *opt, x264_picture_
         printf("[ds] read salint file %d error!\n", i_frame);
         return;
     }
-    const int SALIENT_PIC_SIZE = param->i_width * param->i_height;
+//    const int SALIENT_PIC_SIZE = param->i_width * param->i_height;
+    const int SALIENT_PIC_SIZE = param->i_salient_width * param->i_salient_height;
 //    printf("size = %d, %d, %d\n", SALIENT_PIC_SIZE, param->i_width, param->i_height);
     pic->salient.salient = (unsigned char *)malloc(sizeof(unsigned char)*SALIENT_PIC_SIZE +4);
     if(pic->salient.salient==NULL){
@@ -1937,6 +1938,8 @@ static void parse_salientfile(x264_param_t *param, cli_opt_t *opt, x264_picture_
         *p_salient++ = s;
     }
     pic->salient.b_has_salient = 1;   //good init for salient
+    pic->salient.i_salient_width = param->i_salient_width;
+    pic->salient.i_salient_height = param->i_salient_height;
 }
 static int encode_frame( x264_t *h, hnd_t hout, x264_picture_t *pic, int64_t *last_dts )
 {

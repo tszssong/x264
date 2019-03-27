@@ -302,7 +302,9 @@ typedef struct x264_param_t
     int         i_bitdepth;
     int         i_level_idc;
     int         i_frame_total; /* number of frames to encode if known, else 0 */
-
+    /* salient by dasong */
+    int         i_salient_width;
+    int         i_salient_height;
     /* NAL HRD
      * Uses Buffering and Picture Timing SEIs to signal HRD
      * The HRD in H.264 was not designed with VFR in mind.
@@ -746,6 +748,8 @@ typedef struct x264_image_t
 typedef struct x264_salient_t
 {
     int     b_has_salient;     /* has salient data*/
+    int     i_salient_width;   /* salient data width*/
+    int     i_salient_height;  /* salient data height*/
     uint8_t *salient;          /* Pointers to salint data */
 } x264_salient_t;
 

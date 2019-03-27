@@ -407,7 +407,9 @@ int x264_frame_copy_picture( x264_t *h, x264_frame_t *dst, x264_picture_t *src )
     dst->roi.i_roi_y2 = src->roi.y2;
     const int SALIENT_PIC_SIZE = h->param.i_width * h->param.i_height; //frame size
     printf("frame size:%d,%d,%d\n", SALIENT_PIC_SIZE, h->param.i_width, h->param.i_height);
-    dst->b_has_salient =src->salient.b_has_salient;
+    dst->b_has_salient = src->salient.b_has_salient;
+    dst->i_salient_height = src->salient.i_salient_height;
+    dst->i_salient_width = src->salient.i_salient_width;
     if(dst->b_has_salient){   //0frame file not exist
 //        unsigned char *src_salient = src->salient.salient;
 //        printf("src adr: 0x%x", src_salient);
