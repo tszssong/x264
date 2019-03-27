@@ -1779,8 +1779,8 @@ int x264_ratecontrol_mb_qp( x264_t *h )
 //            default: break;
 //        }
         switch (salient_flag) {
-//            case 0: d_qp = 3*coef;break;    //V1
-            case 0: d_qp = 4*coef;break;    //V2
+            case 0: d_qp = 3*coef;break;    //V1
+//            case 0: d_qp = 4*coef;break;    //V2
             case 1: d_qp = 2*coef;break;
             case 2: d_qp = 1*coef;break;
             case 3: d_qp = 0*coef;break;
