@@ -27,7 +27,7 @@
  * This program is also available under a commercial proprietary license.
  * For more information, contact us at licensing@x264.com.
  *****************************************************************************/
-
+#define USE_DEBUG 1 /*1:show frame0 salient data*/
 #ifdef _WIN32
 /* The following two defines must be located before the inclusion of any system header files. */
 #define WINVER       0x0500
@@ -1932,10 +1932,15 @@ static void parse_salientfile(x264_param_t *param, cli_opt_t *opt, x264_picture_
     }
     unsigned char *p_salient = pic->salient.salient;
     for(int i=0;i<SALIENT_PIC_SIZE;i++){
-        char c_in[2];
+        char c_in[3];
         fscanf(fpRead, "%s ", c_in);
-        int s = c_in[1] ? (c_in[1]-'0')*10 + c_in[0]-'0' : c_in[0]-'0';
+        int s = c_in[2] ? ((c_in[2]-'0')*100 + (c_in[1]-'0')*10 + c_in[0]-'0') : \
+                         c_in[1] ? (c_in[1]-'0')*10 + c_in[0]-'0' : c_in[0]-'0';
         *p_salient++ = s;
+#if USE_DEBUG
+        if(i_frame==0 && i%param->i_salient_width==0) printf("\n");
+        if(i_frame==0) printf("%d ",*(p_salient-1));
+#endif
     }
     pic->salient.b_has_salient = 1;   //good init for salient
     pic->salient.i_salient_width = param->i_salient_width;

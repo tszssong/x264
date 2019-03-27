@@ -1771,11 +1771,18 @@ int x264_ratecontrol_mb_qp( x264_t *h )
 //        mb_salient = mb_salient/h->mb.i_mb_width/h->mb.i_mb_height;  //average
         int salient_x = h->fenc->i_salient_width*h->mb.i_mb_x/h->mb.i_mb_width;
         int salient_y = h->fenc->i_salient_height*h->mb.i_mb_y/h->mb.i_mb_height;
-        unsigned char *salient = h->fenc->salient + salient_y*h->fenc->i_salient_width + salient_x;
+//        unsigned char *salient = h->fenc->salient + salient_y*h->fenc->i_salient_width + salient_x;
+        unsigned char *salient = h->fenc->salient;
+//        for(int i=0;i<h->fenc->i_salient_height;i++){
+//            printf("\n");
+//            for(int j=0;j<h->fenc->i_salient_width;j++){
+//                printf("%d ", *salient++);
+//            }
+//        }
         mb_salient = *salient;
         int salient_flag = mb_salient/51;
         float d_qp = 0;
-        float coef = 2.0;
+        float coef = 1.0;
         switch (salient_flag) {             //1
             case 0: d_qp = 5*coef;break;
             case 1: d_qp = 3*coef;break;
@@ -1794,8 +1801,8 @@ int x264_ratecontrol_mb_qp( x264_t *h )
 //            default: break;
 //        }
         qp += d_qp;
-        if(salient_flag>=1)
-            printf("(%3d,%3d): salient=%.2f, salientflag=%d, addr: 0x%x, d_qp=%.2f, qp=%.2f\n", \
+//        if(salient_flag>=1)
+//            printf("(%3d,%3d): salient=%.2f, salientflag=%d, addr: 0x%x, d_qp=%.2f, qp=%.2f\n", \
                    h->mb.i_mb_x, h->mb.i_mb_y, mb_salient, salient_flag, h->fenc->salient, d_qp, qp);
     }
     return x264_clip3( qp + 0.5f, h->param.rc.i_qp_min, h->param.rc.i_qp_max );
