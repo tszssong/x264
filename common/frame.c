@@ -314,7 +314,6 @@ void x264_frame_delete( x264_frame_t *frame )
     if( !frame->b_duplicate )
     {
         x264_free( frame->base );
-
         if( frame->param && frame->param->param_free )
             frame->param->param_free( frame->param );
         if( frame->mb_info_free )

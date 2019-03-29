@@ -4455,7 +4455,7 @@ void    x264_encoder_close  ( x264_t *h )
                 assert( (*frame)->i_reference_count > 0 );
                 (*frame)->i_reference_count--;
                 if( (*frame)->i_reference_count == 0 )
-                    x264_frame_delete( *frame );
+                    ( *frame );
             }
             x264_macroblock_cache_free( h->thread[i] );
         }

@@ -433,8 +433,10 @@ static void param_default( x264_param_t *param )
     param->i_avcintra_flavor = X264_AVCINTRA_FLAVOR_PANASONIC;
 
     ////////////salient by dasong////////////////////
-    param->i_salient_width = 50;
-    param->i_salient_height = 38;
+    // param->i_salient_width = 50;
+    // param->i_salient_height = 38;
+    param->i_salient_width = 112;
+    param->i_salient_height = 112;
 }
 
 void x264_param_default( x264_param_t *param )

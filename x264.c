@@ -27,7 +27,7 @@
  * This program is also available under a commercial proprietary license.
  * For more information, contact us at licensing@x264.com.
  *****************************************************************************/
-#define USE_DEBUG 1 /*1:show frame0 salient data*/
+#define USE_DEBUG 0 /*1:show frame0 salient data*/
 #ifdef _WIN32
 /* The following two defines must be located before the inclusion of any system header files. */
 #define WINVER       0x0500
@@ -1918,25 +1918,26 @@ static void parse_salientfile(x264_param_t *param, cli_opt_t *opt, x264_picture_
     FILE *fpRead = fopen(filepath, "r");
     if(fpRead==NULL) {
         pic->salient.b_has_salient = 0;
-        printf("[ds] read salint file %d error!\n", i_frame);
+        printf("[ds][Error!] read salint file %d error!\n", i_frame);
         return;
     }
 //    const int SALIENT_PIC_SIZE = param->i_width * param->i_height;
     const int SALIENT_PIC_SIZE = param->i_salient_width * param->i_salient_height;
-//    printf("size = %d, %d, %d\n", SALIENT_PIC_SIZE, param->i_width, param->i_height);
     pic->salient.salient = (unsigned char *)malloc(sizeof(unsigned char)*SALIENT_PIC_SIZE +4);
     if(pic->salient.salient==NULL){
         pic->salient.b_has_salient = 0;
-        printf("[ds] salint %d have no space!\n", i_frame);
+        printf("[ds][Error!] No Space for Salint %d!\n", i_frame);
         return;
     }
     unsigned char *p_salient = pic->salient.salient;
     for(int i=0;i<SALIENT_PIC_SIZE;i++){
         char c_in[3];
-        fscanf(fpRead, "%s ", c_in);
+        int n = fscanf(fpRead, "%s ", c_in);
         int s = c_in[2] ? ((c_in[2]-'0')*100 + (c_in[1]-'0')*10 + c_in[0]-'0') : \
                          c_in[1] ? (c_in[1]-'0')*10 + c_in[0]-'0' : c_in[0]-'0';
         *p_salient++ = s;
+        if(n<1) //salient data != salient_width*salient_height
+            printf("[ds][Error!] Salint file length not match: %d!\n", n);
 #if USE_DEBUG
         if(i_frame==0 && i%param->i_salient_width==0) printf("\n");
         if(i_frame==0) printf("%d ",*(p_salient-1));
