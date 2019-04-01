@@ -7,7 +7,7 @@
  *          Michael Niedermayer <michaelni@gmx.at>
  *          Gabriel Bouvigne <gabriel.bouvigne@joost.com>
  *          Fiona Glaser <fiona@x264.com>
- *          Måns Rullgård <mru@mru.ath.cx>
+ *          Mï¿½ns Rullgï¿½rd <mru@mru.ath.cx>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1771,8 +1771,8 @@ int x264_ratecontrol_mb_qp( x264_t *h )
 //        mb_salient = mb_salient/h->mb.i_mb_width/h->mb.i_mb_height;  //average
         int salient_x = h->fenc->i_salient_width*h->mb.i_mb_x/h->mb.i_mb_width;
         int salient_y = h->fenc->i_salient_height*h->mb.i_mb_y/h->mb.i_mb_height;
-//        unsigned char *salient = h->fenc->salient + salient_y*h->fenc->i_salient_width + salient_x;
-        unsigned char *salient = h->fenc->salient;
+        unsigned char *salient = h->fenc->salient + salient_y*h->fenc->i_salient_width + salient_x;
+//        unsigned char *salient = h->fenc->salient;
 //        for(int i=0;i<h->fenc->i_salient_height;i++){
 //            printf("\n");
 //            for(int j=0;j<h->fenc->i_salient_width;j++){
