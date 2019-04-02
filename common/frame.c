@@ -404,7 +404,8 @@ int x264_frame_copy_picture( x264_t *h, x264_frame_t *dst, x264_picture_t *src )
     dst->roi.i_roi_x1 = src->roi.x1;
     dst->roi.i_roi_x2 = src->roi.x2;
     dst->roi.i_roi_y2 = src->roi.y2;
-    const int SALIENT_PIC_SIZE = h->param.i_width * h->param.i_height; //frame size
+    // const int SALIENT_PIC_SIZE = h->param.i_width * h->param.i_height; //frame size
+    const int SALIENT_PIC_SIZE = src->salient.i_salient_width  * src->salient.i_salient_height; //salient size
     printf("frame size:%d,%d,%d\n", SALIENT_PIC_SIZE, h->param.i_width, h->param.i_height);
     dst->b_has_salient = src->salient.b_has_salient;
     dst->i_salient_height = src->salient.i_salient_height;
@@ -416,7 +417,7 @@ int x264_frame_copy_picture( x264_t *h, x264_frame_t *dst, x264_picture_t *src )
 //            printf("%d ", *src_salient);
 //            src_salient++;
 //        }
-        dst->salient = (unsigned char *)malloc(sizeof(unsigned char)*SALIENT_PIC_SIZE +4);
+        dst->salient = (unsigned char *)malloc(sizeof(unsigned char)*SALIENT_PIC_SIZE + 4);
         if(dst->salient==NULL){
             dst->b_has_salient = 0;
             printf("[ds] fenc salint has no space!\n");
